@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prodly Redesign</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles for a true single-page app feel */
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb; /* bg-gray-50 */
+        }
+        /* The main container for the app will take up the full space */
+        #app-container {
+            width: 100%;
+            height: 100%;
+        }
+        /* A page is hidden by default */
+        .page {
+            display: none;
+            width: 100%;
+            height: 100%;
+            /* Allow vertical scrolling ONLY if the page's content is too long */
+            overflow-y: auto;
+        }
+        /* The active page is displayed as a block element */
+        .page.active {
+            display: block;
+        }
+        /* Specific style for the login page to be centered */
+        #login.active, #peer-matching.active {
+            display: flex; /* Use flexbox to center its content */
+            align-items: center;
+            justify-content: center;
+            overflow-y: hidden; /* The login page itself should never scroll */
+        }
+
+        .btn-primary {
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 10px 20px -10px #EC4899; /* pink-500 */
+            transform: translateY(-2px);
+        }
+        .mic-button.is-listening {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ec4899;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Application Container -->
+    <div id="app-container">
+
+        <!-- PAGE 1: Login Screen -->
+        <div id="login" class="page active p-4">
+            <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-2">Prodly</h1>
+                <p class="text-gray-600 mb-8">Your personal AI coach for product management interviews.</p>
+                <form onsubmit="return false;">
+                    <div class="mb-4 text-left">
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="email" value="aritra@apm.com" required class="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div class="mb-6 text-left">
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="password" value="password123" required class="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <button type="button" onclick="handleLogin()" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-4 rounded-lg">Login & Start Learning</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- PAGE 2A: NEW USER DASHBOARD (WITH PEER INTERVIEW OPTION)            -->
+        <!-- =================================================================== -->
+        <div id="dashboard-new-user" class="page">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">Prodly</h1>
+                <div id="credits-display-new" class="font-bold text-lg text-pink-600"></div>
+                <button onclick="navigateTo('login')" class="text-gray-600 hover:text-pink-700">Sign Out</button>
+            </header>
+            <main class="p-4 md:p-8 max-w-6xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome, Aritra!</h2>
+                <p class="text-gray-600 mb-8">How would you like to practice today?</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- AI Diagnostic Path -->
+                    <div class="bg-white rounded-2xl shadow-lg p-8 flex flex-col">
+                         <h3 class="text-2xl font-bold text-gray-800 mb-4">AI-Powered Diagnostic</h3>
+                         <p class="text-gray-600 mb-6 flex-grow">Take a full mock interview with our AI to unlock your personalized PM Skill Mastery graph.</p>
+                         <button onclick="startDiagnostic()" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Start Diagnostic (1 Credit)</button>
+                    </div>
+                    <!-- Peer Interview Path -->
+                    <div class="bg-white rounded-2xl shadow-lg p-8 flex flex-col">
+                         <h3 class="text-2xl font-bold text-gray-800 mb-4">Interview with Peers</h3>
+                         <p class="text-gray-600 mb-6 flex-grow">Practice with other aspiring PMs. Earn credits by being an interviewer, then spend them on AI mocks.</p>
+                         <button onclick="navigateTo('peer-lobby')" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-full hover:bg-gray-300">Find a Peer</button>
+                    </div>
+                    <!-- Founder Interview Path (NEW!) -->
+                    <div class="bg-white rounded-2xl shadow-lg p-8 border-2 border-yellow-400 flex flex-col">
+                         <h3 class="text-2xl font-bold text-gray-800 mb-4">Interview with the Founder</h3>
+                         <p class="text-gray-600 mb-6 flex-grow">Get expert, personalized feedback directly from the founder of Prodly to supercharge your growth.</p>
+                         <button onclick="bookFounderInterview()" class="w-full bg-yellow-400 text-yellow-900 font-bold py-3 px-8 rounded-full hover:bg-yellow-500">Book Now (₹200 / session)</button>
+                    </div>
+                </div>
+                 <div class="mt-8">
+                    <button onclick="navigateToPracticeList('All Problems')" class="font-semibold text-pink-600 hover:text-pink-800">Or, jump straight into solo practice drills &rarr;</button>
+                 </div>
+            </main>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- PAGE 2B: RETURNING USER DASHBOARD (ELABORATE SKILL LIST)            -->
+        <!-- =================================================================== -->
+        <div id="dashboard-returning-user" class="page">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">Prodly</h1>
+                <div id="credits-display-returning" class="font-bold text-lg text-pink-600"></div>
+                <button onclick="navigateTo('login')" class="text-gray-600 hover:text-pink-700">Sign Out</button>
+            </header>
+            <main class="p-4 md:p-8 max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800">Your PM Skill Mastery</h2>
+                        <p class="text-gray-600">Select a weak area to drill down and practice.</p>
+                    </div>
+                    <button onclick="navigateTo('leaderboard')" class="bg-yellow-400 text-yellow-900 font-bold py-2 px-4 rounded-lg flex items-center space-x-2 hover:bg-yellow-500 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm3 0a1 1 0 000 2h.01a1 1 0 100-2H13zM7 12a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h.01a1 1 0 100-2H10zm3 0a1 1 0 100 2h.01a1 1 0 100-2H13z" clip-rule="evenodd"></path></svg>
+                        <span>View Leaderboard</span>
+                    </button>
+                </div>
+                <div id="skill-mastery-container" class="bg-white rounded-2xl shadow-lg p-6 mb-8 text-left space-y-4"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <button onclick="startDiagnostic()" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Take AI Mock (1 Credit)</button>
+                    <button onclick="navigateTo('peer-lobby')" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-full hover:bg-gray-300">Practice with Peers</button>
+                </div>
+                 <div class="mt-8 bg-white rounded-2xl shadow-lg p-6 text-center">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Ready for Expert Feedback?</h3>
+                    <button onclick="bookFounderInterview()" class="w-full md:w-auto bg-yellow-400 text-yellow-900 font-bold py-3 px-8 rounded-full hover:bg-yellow-500">Interview with the Founder (₹200)</button>
+                </div>
+            </main>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- PAGE 3A: DIAGNOSTIC INTERVIEW SCREEN (DYNAMIC & TIMED)              -->
+        <!-- =================================================================== -->
+        <div id="practice-diagnostic" class="page">
+             <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <button onclick="navigateToDashboard()" class="font-semibold text-pink-700 hover:text-pink-900">&larr; Back to Dashboard</button>
+                <div id="timer" class="text-xl font-bold text-gray-700">40:00</div>
+                <button onclick="handleDiagnosticCompletion()" class="text-gray-600 hover:text-pink-700 font-semibold">End & See My Results</button>
+            </header>
+            <main class="p-4 md:p-8 max-w-3xl mx-auto">
+                 <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 id="question-title" class="text-2xl font-bold text-gray-800 mb-6 text-center">Diagnostic Interview</h2>
+                    <div id="chat-container" class="chat-container h-96 overflow-y-auto bg-gray-50 rounded-lg p-4 space-y-4 mb-6"></div>
+                    <div class="record-section text-center border-t pt-6">
+                        <p id="mic-status" class="text-gray-600 mb-4">Click the mic to record your response</p>
+                        <button id="mic-button" onclick="handleUserResponse()" class="mic-button bg-pink-600 hover:bg-pink-700 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto shadow-lg transition transform hover:scale-110">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M7 4a3 3 0 016 0v6a3 3 0 11-6 0V4zM4 10a1 1 0 00-2 0v1a8 8 0 007 7.93V20H8a1 1 0 000 2h4a1 1 0 000-2h-1v-1.07A8 8 0 0018 11v-1a1 1 0 00-2 0v1a6 6 0 01-12 0v-1z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- =================================================================== -->
+        <!-- PAGE 3B: PRACTICE PROBLEM LIST SCREEN (LEETCODE STYLE)              -->
+        <!-- =================================================================== -->
+        <div id="practice-list" class="page">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <button onclick="navigateToDashboard()" class="font-semibold text-pink-700 hover:text-pink-900">&larr; Back to Dashboard</button>
+                <h2 id="practice-list-title" class="text-2xl font-bold text-gray-800">Practice Problems</h2>
+                <div class="text-gray-600"></div>
+            </header>
+            <main class="p-4 md:p-8 max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                        <div class="flex space-x-2 mb-4 md:mb-0">
+                            <button class="px-4 py-2 text-sm font-semibold bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300">All</button>
+                            <button class="px-4 py-2 text-sm font-semibold bg-green-100 text-green-800 rounded-full hover:bg-green-200">Easy</button>
+                            <button class="px-4 py-2 text-sm font-semibold bg-yellow-100 text-yellow-800 rounded-full hover:bg-yellow-200">Medium</button>
+                            <button class="px-4 py-2 text-sm font-semibold bg-red-100 text-red-800 rounded-full hover:bg-red-200">Hard</button>
+                        </div>
+                        <div class="font-semibold text-gray-600"><span>10 / 100 Solved</span></div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center p-2 text-sm font-bold text-gray-500 uppercase">
+                            <div class="w-1/12">Status</div><div class="w-7/12">Problem</div><div class="w-2/12 text-center">Difficulty</div><div class="w-2/12 text-center">Action</div>
+                        </div>
+                        <div class="flex items-center bg-gray-50 p-4 rounded-lg">
+                            <div class="w-1/12 text-green-500"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            <div class="w-7/12 font-semibold text-gray-800">Improve YouTube's search results</div>
+                            <div class="w-2/12 text-center"><span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">Easy</span></div>
+                            <div class="w-2/12 text-center"><button onclick="startDrill('Improve YouTube\'s search results', 'Product Design')" class="font-semibold text-pink-600 hover:text-pink-800">Solve</button></div>
+                        </div>
+                        <div class="flex items-center bg-gray-50 p-4 rounded-lg">
+                            <div class="w-1/12 text-gray-400"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            <div class="w-7/12 font-semibold text-gray-800">Design a feature for Spotify to share podcasts</div>
+                            <div class="w-2/12 text-center"><span class="px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-200 rounded-full">Medium</span></div>
+                            <div class="w-2/12 text-center"><button onclick="startDrill('Design a feature for Spotify to share podcasts', 'Product Design')" class="font-semibold text-pink-600 hover:text-pink-800">Solve</button></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- PAGE 3C: DEDICATED DRILL SCREEN                                     -->
+        <!-- =================================================================== -->
+        <div id="practice-drill" class="page">
+             <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <button onclick="navigateToPracticeList(currentDrill.skill)" class="font-semibold text-pink-700 hover:text-pink-900">&larr; Back to Problems</button>
+                <div id="drill-timer" class="text-xl font-bold text-gray-700">05:00</div>
+                <button onclick="handleDrillCompletion()" class="text-gray-600 hover:text-pink-700 font-semibold">End Drill & See Score</button>
+            </header>
+            <main class="p-4 md:p-8 max-w-3xl mx-auto">
+                 <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 id="drill-title" class="text-2xl font-bold text-gray-800 mb-6 text-center"></h2>
+                    <div id="drill-chat-container" class="chat-container h-96 overflow-y-auto bg-gray-50 rounded-lg p-4 space-y-4 mb-6"></div>
+                    <div class="record-section text-center border-t pt-6">
+                        <p id="drill-mic-status" class="text-gray-600 mb-4">Click the mic to record your response</p>
+                        <button id="drill-mic-button" onclick="handleDrillResponse()" class="mic-button bg-pink-600 hover:bg-pink-700 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto shadow-lg transition transform hover:scale-110">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M7 4a3 3 0 016 0v6a3 3 0 11-6 0V4zM4 10a1 1 0 00-2 0v1a8 8 0 007 7.93V20H8a1 1 0 000 2h4a1 1 0 000-2h-1v-1.07A8 8 0 0018 11v-1a1 1 0 00-2 0v1a6 6 0 01-12 0v-1z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- =================================================================== -->
+        <!-- PAGE 4: DRILL FEEDBACK & SCORE SCREEN                               -->
+        <!-- =================================================================== -->
+        <div id="drill-feedback" class="page">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <h2 class="text-2xl font-bold text-gray-800">Drill Results</h2>
+                <div class="w-24"></div> <!-- Spacer -->
+            </header>
+            <main class="p-4 md:p-8 max-w-4xl mx-auto text-center">
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                     <h3 class="text-2xl font-bold text-gray-800 mb-2">Great Work!</h3>
+                     <p class="text-gray-600 mb-6">Here's how you did on that drill.</p>
+                     <div id="drill-score-card" class="bg-pink-50 border-2 border-pink-500 rounded-2xl p-6 mb-6"></div>
+                     <button onclick="navigateToPracticeList(currentDrill.skill)" class="w-full md:w-auto btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Return to Practice Sheet</button>
+                </div>
+            </main>
+        </div>
+
+
+        <!-- =================================================================== -->
+        <!-- PAGE 5: LEADERBOARD SCREEN                                          -->
+        <!-- =================================================================== -->
+        <div id="leaderboard" class="page">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <button onclick="navigateToDashboard()" class="font-semibold text-pink-700 hover:text-pink-900">&larr; Back to Dashboard</button>
+                <h2 class="text-2xl font-bold text-gray-800">Leaderboard</h2>
+                <div class="w-24"></div> <!-- Spacer -->
+            </header>
+            <main class="p-4 md:p-8 max-w-4xl mx-auto">
+                <div id="current-user-rank" class="bg-white rounded-2xl shadow-lg p-6 mb-8 text-center border-2 border-pink-500"></div>
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div id="leaderboard-list" class="space-y-2"></div>
+                </div>
+            </main>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- PAGE 6: PEER INTERVIEW LOBBY                                        -->
+        <!-- =================================================================== -->
+        <div id="peer-lobby" class="page">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <button onclick="navigateToDashboard()" class="font-semibold text-pink-700 hover:text-pink-900">&larr; Back to Dashboard</button>
+                <h2 class="text-2xl font-bold text-gray-800">Peer Interview Lobby</h2>
+                <div id="credits-display-lobby" class="font-bold text-lg text-pink-600"></div>
+            </header>
+            <main class="p-4 md:p-8 max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Request an Interview</h3>
+                        <p class="text-gray-600 mb-4 text-sm">Find a peer to practice with. This will start a 7-8 minute mock interview session.</p>
+                        <div class="font-semibold text-gray-700 mb-4">Available Interviewers: <span class="text-green-600">4</span></div>
+                        <button onclick="findMatch()" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-4 rounded-lg">Find a Match</button>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Volunteer to Interview</h3>
+                        <p class="text-gray-600 mb-4 text-sm">Help a peer practice and earn credits for your own AI mocks. You'll earn 1 credit per session.</p>
+                        <div class="font-semibold text-gray-700 mb-4">Interviewees Waiting: <span class="text-blue-600">2</span></div>
+                        <button onclick="findMatch()" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300">Start Interviewing</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- PAGE 7: PEER MATCHING SCREEN                                        -->
+        <!-- =================================================================== -->
+        <div id="peer-matching" class="page p-4">
+            <div class="text-center">
+                <div class="loader mx-auto"></div>
+                <h2 class="text-2xl font-bold text-gray-800 mt-6">Searching for a peer...</h2>
+                <p class="text-gray-600">This should only take a moment.</p>
+            </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- PAGE 8: PEER INTERVIEW SCREEN                                       -->
+        <!-- =================================================================== -->
+        <div id="peer-interview" class="page">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <button onclick="handlePeerInterviewCompletion()" class="font-semibold text-pink-700 hover:text-pink-900">&larr; End Interview</button>
+                <div id="peer-timer" class="text-xl font-bold text-gray-700">08:00</div>
+                <div class="w-24"></div> <!-- Spacer -->
+            </header>
+            <main class="p-4 md:p-8 max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-2 grid grid-cols-1 gap-6">
+                        <div class="bg-gray-800 rounded-lg aspect-video flex items-center justify-center text-white relative">
+                            <img src="https://placehold.co/600x400/2D3748/E2E8F0?text=Peer's+Video" class="w-full h-full object-cover rounded-lg">
+                            <span class="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-sm">Olivia L.</span>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg aspect-video flex items-center justify-center text-white relative">
+                            <img src="https://placehold.co/600x400/2D3748/E2E8F0?text=Your+Video" class="w-full h-full object-cover rounded-lg">
+                            <span class="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-sm">Aritra (You)</span>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Interview Case</h3>
+                        <div class="bg-gray-100 p-4 rounded-lg text-gray-700 mb-6">
+                            <p class="font-semibold">AI-Generated Question:</p>
+                            <p>"You are the PM for a food delivery app. Brainstorm three ways to improve the post-order tracking experience for users."</p>
+                        </div>
+                        <div id="peer-start-controls">
+                            <p class="text-sm text-gray-600 mb-4">The 8-minute timer will begin once both participants click 'Start'.</p>
+                            <button id="my-start-button" onclick="handlePeerInterviewStart()" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-4 rounded-lg mb-2">Start Interview</button>
+                            <div class="text-center text-gray-500">
+                                <span id="peer-start-status" class="hidden">Peer is not ready.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- PAGE 9: PEER FEEDBACK & SCORING SCREEN (NEW!)                       -->
+        <!-- =================================================================== -->
+        <div id="peer-feedback" class="page">
+             <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <h2 class="text-2xl font-bold text-gray-800">Session Over: Provide Feedback</h2>
+                <div class="w-24"></div> <!-- Spacer -->
+            </header>
+            <main class="p-4 md:p-8 max-w-4xl mx-auto text-center">
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                     <h3 class="text-2xl font-bold text-gray-800 mb-2">How did Olivia L. do?</h3>
+                     <p class="text-gray-600 mb-6">Your feedback helps the community improve. Rate their performance as the interviewee.</p>
+                     <div class="text-left">
+                        <div class="mb-6">
+                            <label class="font-bold text-gray-700 block mb-2">Overall Score (out of 10)</label>
+                            <input type="range" min="1" max="10" value="7" class="w-full">
+                        </div>
+                        <div class="mb-6">
+                            <label class="font-bold text-gray-700 block mb-2">What did they do well?</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button class="px-3 py-1 text-sm font-semibold bg-green-100 text-green-800 rounded-full hover:bg-green-200">Good Structure</button>
+                                <button class="px-3 py-1 text-sm font-semibold bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300">Creative Solutions</button>
+                                <button class="px-3 py-1 text-sm font-semibold bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300">Clear Communication</button>
+                                <button class="px-3 py-1 text-sm font-semibold bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300">Handled Pushback</button>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <label for="detailed-feedback" class="font-bold text-gray-700 block mb-2">Detailed Written Review</label>
+                            <textarea id="detailed-feedback" rows="4" class="w-full p-3 bg-gray-100 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Provide specific, constructive feedback..."></textarea>
+                        </div>
+                     </div>
+                     <button onclick="submitPeerFeedback()" class="w-full md:w-auto btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Submit Feedback & Claim Credit</button>
+                </div>
+            </main>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- PAGE 10: PEER RESULTS SCREEN                                        -->
+        <!-- =================================================================== -->
+        <div id="peer-results" class="page">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <h2 class="text-2xl font-bold text-gray-800">Interview Complete!</h2>
+                <div class="w-24"></div> <!-- Spacer -->
+            </header>
+            <main class="p-4 md:p-8 max-w-4xl mx-auto text-center">
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-green-500 mb-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                     <h3 class="text-2xl font-bold text-gray-800 mb-2">Great Session!</h3>
+                     <p class="text-gray-600 mb-6">You've earned a credit for completing the peer interview.</p>
+                     <div class="bg-green-100 text-green-800 font-bold p-4 rounded-lg text-lg">
+                        +1 Credit Added!
+                     </div>
+                     <button onclick="navigateToDashboard()" class="mt-6 w-full md:w-auto btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Return to Dashboard</button>
+                </div>
+            </main>
+        </div>
+        
+    </div>
+
+    <script>
+        // --- STATE MANAGEMENT ---
+        let diagnosticCompleted = false;
+        let timerInterval;
+        let currentQuestionIndex = 0;
+        let currentDrill = { title: '', skill: '' };
+        let userCredits = 5;
+        let peerInterviewState = { myStart: false, peerStart: false };
+        let skillMastery = {
+            'Product Design': { name: 'Product Design & Sense', score: 75 },
+            'Metrics': { name: 'Metrics & Data Analysis', score: 20 },
+            'Strategy': { name: 'Strategy & Business Acumen', score: 45 },
+            'Execution': { name: 'Execution & Prioritization', score: 60 },
+        };
+
+        const interviewScript = [
+            { type: 'interviewer', text: "Hi Aritra. Welcome to your diagnostic interview... Let's begin: \"You are the PM for Google Maps. You notice that engagement with the 'Explore' tab has dropped by 15% in the last month. How would you investigate this?\"" },
+            { type: 'user', text: "Okay, first I'd want to clarify the scope..." },
+            { type: 'interviewer', text: "Great clarifying questions. Assume the drop started exactly 4 weeks ago... What would be your next steps?" },
+            { type: 'user', text: "Understood. In that case, I'd formulate a hypothesis..." },
+            { type: 'interviewer', text: "That's a logical approach. Let's say you've ruled out any major bugs..." }
+        ];
+
+        // --- DOM ELEMENTS ---
+        const pages = document.querySelectorAll('.page');
+        const timerDisplay = document.getElementById('timer');
+        const chatContainer = document.getElementById('chat-container');
+        const micButton = document.getElementById('mic-button');
+        const micStatus = document.getElementById('mic-status');
+        const questionTitle = document.getElementById('question-title');
+        const practiceListTitle = document.getElementById('practice-list-title');
+        const drillTimerDisplay = document.getElementById('drill-timer');
+        const drillTitle = document.getElementById('drill-title');
+        const drillChatContainer = document.getElementById('drill-chat-container');
+        const drillMicButton = document.getElementById('drill-mic-button');
+        const drillMicStatus = document.getElementById('drill-mic-status');
+        const drillScoreCard = document.getElementById('drill-score-card');
+        const currentUserRankDiv = document.getElementById('current-user-rank');
+        const leaderboardListDiv = document.getElementById('leaderboard-list');
+        const skillMasteryContainer = document.getElementById('skill-mastery-container');
+        const creditsDisplayNew = document.getElementById('credits-display-new');
+        const creditsDisplayReturning = document.getElementById('credits-display-returning');
+        const creditsDisplayLobby = document.getElementById('credits-display-lobby');
+        const peerTimerDisplay = document.getElementById('peer-timer');
+        const myStartButton = document.getElementById('my-start-button');
+        const peerStartStatus = document.getElementById('peer-start-status');
+        const peerStartControls = document.getElementById('peer-start-controls');
+
+
+        // --- NAVIGATION ---
+        function navigateTo(pageId) {
+            pages.forEach(page => page.classList.remove('active'));
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                if (pageId === 'leaderboard') renderLeaderboard();
+                if (pageId === 'dashboard-returning-user' || pageId === 'dashboard-new-user' || pageId === 'peer-lobby') updateCreditsDisplay();
+                if (pageId === 'dashboard-returning-user') renderSkillMastery();
+                if (pageId === 'drill-feedback') renderDrillFeedback();
+                nextPage.classList.add('active');
+            }
+            window.scrollTo(0, 0);
+        }
+        
+        function navigateToDashboard() {
+            diagnosticCompleted ? navigateTo('dashboard-returning-user') : navigateTo('dashboard-new-user');
+        }
+
+        function navigateToPracticeList(skillName) {
+            practiceListTitle.textContent = `Practice: ${skillName}`;
+            navigateTo('practice-list');
+        }
+
+        // --- TIMER LOGIC ---
+        function startTimer(duration, display, onComplete) {
+            let time = duration;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                time--;
+                const minutes = Math.floor(time / 60).toString().padStart(2, '0');
+                const seconds = (time % 60).toString().padStart(2, '0');
+                display.textContent = `${minutes}:${seconds}`;
+                if (time <= 0) {
+                    clearInterval(timerInterval);
+                    onComplete();
+                }
+            }, 1000);
+        }
+
+        // --- CHAT LOGIC ---
+        function addMessageToChat(type, text, container) {
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble flex ${type === 'user' ? 'justify-end' : 'justify-start'}`;
+            const message = document.createElement('div');
+            message.className = `rounded-lg p-3 max-w-md ${type === 'user' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-800'}`;
+            message.innerHTML = `<p>${text}</p>`;
+            bubble.appendChild(message);
+            container.appendChild(bubble);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // --- INTERVIEW & DRILL LOGIC ---
+        function startDiagnostic() {
+            if (userCredits < 1) {
+                alert("You don't have enough credits. Volunteer to interview a peer to earn more!");
+                return;
+            }
+            userCredits--;
+            updateCreditsDisplay();
+            navigateTo('practice-diagnostic');
+            startTimer(40 * 60, timerDisplay, handleDiagnosticCompletion);
+            chatContainer.innerHTML = '';
+            currentQuestionIndex = 0;
+            questionTitle.textContent = 'Diagnostic Interview';
+            addMessageToChat('interviewer', interviewScript[0].text, chatContainer);
+            currentQuestionIndex++;
+            micButton.disabled = false;
+        }
+
+        function startDrill(problemTitle, skill) {
+            currentDrill = { title: problemTitle, skill: skill };
+            navigateTo('practice-drill');
+            startTimer(5 * 60, drillTimerDisplay, handleDrillCompletion);
+            drillTitle.textContent = problemTitle;
+            drillChatContainer.innerHTML = '';
+            addMessageToChat('interviewer', `Okay, let's tackle this problem: "${problemTitle}". How would you begin?`, drillChatContainer);
+        }
+        
+        function handleUserResponse() {
+            if (currentQuestionIndex >= interviewScript.length) return;
+            micButton.disabled = true;
+            micButton.classList.add('is-listening');
+            micStatus.textContent = 'Listening...';
+            setTimeout(() => {
+                micStatus.textContent = 'Processing...';
+                const userResponse = interviewScript[currentQuestionIndex];
+                addMessageToChat('user', userResponse.text, chatContainer);
+                currentQuestionIndex++;
+                setTimeout(() => {
+                    if (currentQuestionIndex < interviewScript.length) {
+                        const interviewerResponse = interviewScript[currentQuestionIndex];
+                        addMessageToChat('interviewer', interviewerResponse.text, chatContainer);
+                        currentQuestionIndex++;
+                        questionTitle.textContent = `Follow-up Question`;
+                    } else {
+                        addMessageToChat('interviewer', 'Thank you. You can now end the session to see your results.', chatContainer);
+                    }
+                    micButton.classList.remove('is-listening');
+                    micStatus.textContent = 'Click the mic to record your response';
+                    micButton.disabled = false;
+                }, 1500);
+            }, 2000);
+        }
+
+        function handleDrillResponse() {
+            drillMicButton.disabled = true;
+            drillMicButton.classList.add('is-listening');
+            drillMicStatus.textContent = 'Listening...';
+            setTimeout(() => {
+                drillMicStatus.textContent = 'Processing...';
+                addMessageToChat('user', 'My initial approach would be to define the key user segments for this feature...', drillChatContainer);
+                setTimeout(() => {
+                    addMessageToChat('interviewer', 'That\'s a good start. Can you elaborate on who those key user segments might be?', drillChatContainer);
+                    drillMicButton.classList.remove('is-listening');
+                    drillMicStatus.textContent = 'Click the mic to record your response';
+                    drillMicButton.disabled = false;
+                }, 1500);
+            }, 2000);
+        }
+
+        // --- PEER INTERVIEW LOGIC ---
+        function findMatch() {
+            navigateTo('peer-matching');
+            setTimeout(() => {
+                peerInterviewState = { myStart: false, peerStart: false };
+                myStartButton.textContent = 'Start Interview';
+                myStartButton.disabled = false;
+                peerStartControls.style.display = 'block';
+                peerStartStatus.classList.add('hidden');
+                navigateTo('peer-interview');
+            }, 3000); // Simulate 3 seconds of matching
+        }
+        
+        function handlePeerInterviewStart() {
+            peerInterviewState.myStart = true;
+            myStartButton.textContent = 'Waiting for Peer...';
+            myStartButton.disabled = true;
+            peerStartStatus.classList.remove('hidden');
+
+            // Simulate peer clicking start after a delay
+            setTimeout(() => {
+                peerInterviewState.peerStart = true;
+                checkBothStarted();
+            }, 2000);
+            
+            checkBothStarted();
+        }
+
+        function checkBothStarted() {
+            if (peerInterviewState.myStart && peerInterviewState.peerStart) {
+                peerStartControls.style.display = 'none';
+                startTimer(8 * 60, peerTimerDisplay, handlePeerInterviewCompletion);
+            }
+        }
+        
+        function submitPeerFeedback() {
+            userCredits++;
+            updateCreditsDisplay();
+            navigateTo('peer-results');
+        }
+
+        // --- FEEDBACK & SCORING ---
+        function renderDrillFeedback() {
+            const oldScore = skillMastery[currentDrill.skill].score;
+            const scoreIncrease = Math.floor(Math.random() * 5) + 3;
+            const newScore = Math.min(100, oldScore + scoreIncrease);
+            skillMastery[currentDrill.skill].score = newScore;
+            drillScoreCard.innerHTML = `<p class="text-gray-600">Your Score on this Drill</p><p class="text-5xl font-bold text-pink-600 my-2">${Math.floor(Math.random() * 3) + 7}/10</p><div class="mt-4 bg-green-100 text-green-800 font-semibold p-3 rounded-lg">Your "${skillMastery[currentDrill.skill].name}" skill increased from ${oldScore}% to ${newScore}%!</div>`;
+        }
+
+        // --- RENDERING ---
+        function updateCreditsDisplay() {
+            const creditText = `Credits: ${userCredits}`;
+            creditsDisplayNew.textContent = creditText;
+            creditsDisplayReturning.textContent = creditText;
+            creditsDisplayLobby.textContent = creditText;
+        }
+
+        function renderSkillMastery() {
+            skillMasteryContainer.innerHTML = '';
+            Object.entries(skillMastery).forEach(([key, value]) => {
+                const { name, score } = value;
+                const isWeak = score < 50;
+                const color = score > 70 ? 'green' : score > 40 ? 'yellow' : 'red';
+                const skillElement = document.createElement('div');
+                skillElement.className = `p-4 rounded-lg border ${isWeak ? 'bg-red-50 border-red-200' : ''}`;
+                skillElement.innerHTML = `<div class="flex justify-between items-center mb-2"><span class="font-bold text-lg text-gray-800">${name}</span><button onclick="navigateToPracticeList('${key}')" class="bg-pink-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-pink-600 transition">Practice</button></div><div class="w-full bg-gray-200 rounded-full h-4"><div class="bg-${color}-500 h-4 rounded-full" style="width: ${score}%"></div></div><p class="text-right text-sm text-gray-500 mt-1">${score}% Mastery</p>`;
+                skillMasteryContainer.appendChild(skillElement);
+            });
+        }
+
+        function generateSimulatedUsers() {
+            const names = ["Liam", "Olivia", "Noah", "Emma", "Oliver", "Ava", "Elijah", "Charlotte", "William", "Sophia", "James", "Amelia", "Benjamin", "Isabella", "Lucas", "Mia", "Henry", "Evelyn", "Alexander"];
+            const users = [];
+            for (let i = 0; i < 100; i++) {
+                const name = i === 13 ? "Aritra" : `${names[Math.floor(Math.random() * names.length)]} ${String.fromCharCode(65 + Math.floor(Math.random() * 26))}.`;
+                const problemsSolved = Math.floor(Math.random() * 100);
+                const mastery = Math.floor(Math.random() * 80) + 20;
+                const score = (problemsSolved * 10) + (mastery * 5);
+                users.push({ name, problemsSolved, mastery, score });
+            }
+            return users.sort((a, b) => b.score - a.score);
+        }
+
+        function renderLeaderboard() {
+            const users = generateSimulatedUsers();
+            leaderboardListDiv.innerHTML = `<div class="flex items-center p-2 text-sm font-bold text-gray-500 uppercase"><div class="w-1/6 text-center">Rank</div><div class="w-3/6">User</div><div class="w-2/6 text-center">Score</div></div>`;
+            let currentUserData = null;
+            let currentUserRank = 0;
+            users.forEach((user, index) => {
+                const rank = index + 1;
+                if (user.name === 'Aritra') {
+                    currentUserData = user;
+                    currentUserRank = rank;
+                }
+                const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+                const bgColor = user.name === 'Aritra' ? 'bg-pink-100' : 'bg-gray-50';
+                leaderboardListDiv.innerHTML += `<div class="flex items-center ${bgColor} p-4 rounded-lg"><div class="w-1/6 text-center font-bold text-lg">${rankIcon}</div><div class="w-3/6 font-semibold text-gray-800">${user.name}</div><div class="w-2/6 text-center font-bold text-pink-600">${user.score}</div></div>`;
+            });
+            if (currentUserData) {
+                currentUserRankDiv.innerHTML = `<p class="text-gray-600">Your Current Rank</p><p class="text-4xl font-bold text-pink-600 my-2">#${currentUserRank}</p><p class="text-gray-800 font-semibold">${currentUserData.score} Points</p>`;
+            }
+        }
+
+        // --- EVENT HANDLERS ---
+        function handleLogin() {
+             updateCreditsDisplay();
+             navigateToDashboard();
+        }
+
+        function handleDiagnosticCompletion() {
+            diagnosticCompleted = true;
+            clearInterval(timerInterval);
+            navigateTo('dashboard-returning-user');
+        }
+
+        function handleDrillCompletion() {
+            clearInterval(timerInterval);
+            navigateTo('drill-feedback');
+        }
+
+        function handlePeerInterviewCompletion() {
+            clearInterval(timerInterval);
+            navigateTo('peer-feedback');
+        }
+        
+        function bookFounderInterview() {
+            // In a real app, this would link to a payment/scheduling flow.
+            alert("Booking flow initiated! You will be redirected to a scheduling page.");
+        }
+
+    </script>
+</body>
+</html>
