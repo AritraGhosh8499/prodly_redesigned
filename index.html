@@ -34,7 +34,7 @@
             display: block;
         }
         /* Specific style for the login page to be centered */
-        #login.active, #peer-matching.active {
+        #login.active {
             display: flex; /* Use flexbox to center its content */
             align-items: center;
             justify-content: center;
@@ -55,18 +55,6 @@
             0% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); }
             100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #ec4899;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -95,40 +83,39 @@
         </div>
 
         <!-- =================================================================== -->
-        <!-- PAGE 2A: NEW USER DASHBOARD (WITH PEER INTERVIEW OPTION)            -->
+        <!-- PAGE 2A: NEW USER DASHBOARD (WITH PRACTICE OPTION)                  -->
         <!-- =================================================================== -->
         <div id="dashboard-new-user" class="page">
             <header class="bg-white shadow-sm p-4 flex justify-between items-center">
                 <h1 class="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">Prodly</h1>
-                <div id="credits-display-new" class="font-bold text-lg text-pink-600"></div>
-                <button onclick="navigateTo('login')" class="text-gray-600 hover:text-pink-700">Sign Out</button>
+                <div>
+                    <span class="font-bold text-gray-700 mr-4">Credits: <span id="credits-display-new">5</span></span>
+                    <button onclick="navigateTo('login')" class="text-gray-600 hover:text-pink-700">Sign Out</button>
+                </div>
             </header>
-            <main class="p-4 md:p-8 max-w-6xl mx-auto text-center">
-                <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome, Aritra!</h2>
-                <p class="text-gray-600 mb-8">How would you like to practice today?</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- AI Diagnostic Path -->
-                    <div class="bg-white rounded-2xl shadow-lg p-8 flex flex-col">
-                         <h3 class="text-2xl font-bold text-gray-800 mb-4">AI-Powered Diagnostic</h3>
-                         <p class="text-gray-600 mb-6 flex-grow">Take a full mock interview with our AI to unlock your personalized PM Skill Mastery graph.</p>
-                         <button onclick="startDiagnostic()" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Start Diagnostic (1 Credit)</button>
+            <main class="p-4 md:p-8 max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2 text-center">Welcome, Aritra!</h2>
+                <p class="text-gray-600 mb-8 text-center">How would you like to practice today?</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 text-center border-2 border-pink-500">
+                         <h3 class="text-xl font-bold text-gray-800 mb-2">AI-Powered Diagnostic</h3>
+                         <p class="text-gray-600 mb-4 text-sm">Take a full mock interview with our AI to unlock your personalized PM Skill Mastery graph.</p>
+                         <button onclick="startDiagnostic()" class="btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-2 px-6 rounded-lg">Start Diagnostic (1 Credit)</button>
                     </div>
-                    <!-- Peer Interview Path -->
-                    <div class="bg-white rounded-2xl shadow-lg p-8 flex flex-col">
-                         <h3 class="text-2xl font-bold text-gray-800 mb-4">Interview with Peers</h3>
-                         <p class="text-gray-600 mb-6 flex-grow">Practice with other aspiring PMs. Earn credits by being an interviewer, then spend them on AI mocks.</p>
-                         <button onclick="navigateTo('peer-lobby')" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-full hover:bg-gray-300">Find a Peer</button>
-                    </div>
-                    <!-- Founder Interview Path (NEW!) -->
-                    <div class="bg-white rounded-2xl shadow-lg p-8 border-2 border-yellow-400 flex flex-col">
-                         <h3 class="text-2xl font-bold text-gray-800 mb-4">Interview with the Founder</h3>
-                         <p class="text-gray-600 mb-6 flex-grow">Get expert, personalized feedback directly from the founder of Prodly to supercharge your growth.</p>
-                         <button onclick="bookFounderInterview()" class="w-full bg-yellow-400 text-yellow-900 font-bold py-3 px-8 rounded-full hover:bg-yellow-500">Book Now (₹200 / session)</button>
+                     <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                         <h3 class="text-xl font-bold text-gray-800 mb-2">Interview with Peers</h3>
+                         <p class="text-gray-600 mb-4 text-sm">Practice with other aspiring PMs. Earn credits by being an interviewer, then spend them on AI mocks.</p>
+                         <button onclick="navigateTo('peer-lobby')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg">Find a Peer</button>
                     </div>
                 </div>
-                 <div class="mt-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6 text-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Ready for Expert Feedback?</h3>
+                    <p class="text-gray-600 mb-4 text-sm">Book a one-on-one mock interview with the founder for personalized, in-depth coaching.</p>
+                    <button onclick="alert('Booking functionality would be implemented here.')" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-2 px-6 rounded-lg">Interview with the Founder (₹200)</button>
+                </div>
+                <div class="text-center">
                     <button onclick="navigateToPracticeList('All Problems')" class="font-semibold text-pink-600 hover:text-pink-800">Or, jump straight into solo practice drills &rarr;</button>
-                 </div>
+                </div>
             </main>
         </div>
 
@@ -137,11 +124,16 @@
         <!-- =================================================================== -->
         <div id="dashboard-returning-user" class="page">
             <header class="bg-white shadow-sm p-4 flex justify-between items-center">
-                <h1 class="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">Prodly</h1>
-                <div id="credits-display-returning" class="font-bold text-lg text-pink-600"></div>
-                <button onclick="navigateTo('login')" class="text-gray-600 hover:text-pink-700">Sign Out</button>
+                 <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">Prodly</h1>
+                    <span class="font-bold text-gray-700 text-lg">🔥 5 Day Streak!</span>
+                </div>
+                <div>
+                    <span class="font-bold text-gray-700 mr-4">Credits: <span id="credits-display-returning">5</span></span>
+                    <button onclick="navigateTo('login')" class="text-gray-600 hover:text-pink-700">Sign Out</button>
+                </div>
             </header>
-            <main class="p-4 md:p-8 max-w-4xl mx-auto">
+             <main class="p-4 md:p-8 max-w-5xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h2 class="text-3xl font-bold text-gray-800">Your PM Skill Mastery</h2>
@@ -152,14 +144,15 @@
                         <span>View Leaderboard</span>
                     </button>
                 </div>
-                <div id="skill-mastery-container" class="bg-white rounded-2xl shadow-lg p-6 mb-8 text-left space-y-4"></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <button onclick="startDiagnostic()" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Take AI Mock (1 Credit)</button>
-                    <button onclick="navigateTo('peer-lobby')" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-full hover:bg-gray-300">Practice with Peers</button>
+
+                <div id="skill-mastery-container" class="bg-white rounded-2xl shadow-lg p-6 mb-8 text-left space-y-4">
+                    <!-- Skill Items will be dynamically inserted here -->
                 </div>
-                 <div class="mt-8 bg-white rounded-2xl shadow-lg p-6 text-center">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Ready for Expert Feedback?</h3>
-                    <button onclick="bookFounderInterview()" class="w-full md:w-auto bg-yellow-400 text-yellow-900 font-bold py-3 px-8 rounded-full hover:bg-yellow-500">Interview with the Founder (₹200)</button>
+                
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <button onclick="startDiagnostic()" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-6 rounded-lg">Take AI Mock (1 Credit)</button>
+                    <button onclick="navigateTo('peer-lobby')" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg">Practice with Peers</button>
+                    <button onclick="alert('Booking functionality would be implemented here.')" class="w-full bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-3 px-6 rounded-lg">Interview with the Founder (₹200)</button>
                 </div>
             </main>
         </div>
@@ -233,7 +226,7 @@
         <!-- =================================================================== -->
         <div id="practice-drill" class="page">
              <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
-                <button onclick="navigateToPracticeList(currentDrill.skill)" class="font-semibold text-pink-700 hover:text-pink-900">&larr; Back to Problems</button>
+                <button onclick="navigateToDashboard()" class="font-semibold text-pink-700 hover:text-pink-900">&larr; Back to Dashboard</button>
                 <div id="drill-timer" class="text-xl font-bold text-gray-700">05:00</div>
                 <button onclick="handleDrillCompletion()" class="text-gray-600 hover:text-pink-700 font-semibold">End Drill & See Score</button>
             </header>
@@ -252,19 +245,140 @@
         </div>
         
         <!-- =================================================================== -->
-        <!-- PAGE 4: DRILL FEEDBACK & SCORE SCREEN                               -->
+        <!-- PAGE 4A: DRILL FEEDBACK & SCORE SCREEN (EVOLVED AI COACH)           -->
         <!-- =================================================================== -->
         <div id="drill-feedback" class="page">
             <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
                 <h2 class="text-2xl font-bold text-gray-800">Drill Results</h2>
                 <div class="w-24"></div> <!-- Spacer -->
             </header>
+            <main class="p-4 md:p-8 max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                     <h3 class="text-2xl font-bold text-gray-800 mb-2 text-center">Great Work!</h3>
+                     <p class="text-gray-600 mb-6 text-center">Here's your AI Coach's feedback on that drill.</p>
+                     <div id="drill-score-card" class="bg-pink-50 border-2 border-pink-500 rounded-2xl p-6 mb-6">
+                        <div class="text-left">
+                            <h4 class="font-bold text-lg text-green-700">What you did well:</h4>
+                            <ul class="list-disc list-inside text-gray-700 my-2">
+                                <li>Excellent job identifying the primary user segments.</li>
+                                <li>Your initial success metrics were logical and well-defined.</li>
+                            </ul>
+                            <h4 class="font-bold text-lg text-yellow-700 mt-4">Areas for improvement:</h4>
+                            <ul class="list-disc list-inside text-gray-700 my-2">
+                                <li>Try to consider counter-metrics to avoid unintended consequences.</li>
+                            </ul>
+                        </div>
+                     </div>
+                     <div class="bg-blue-50 border-2 border-blue-500 rounded-2xl p-6 mb-6 text-left">
+                        <h4 class="font-bold text-lg text-blue-800">💡 Coach's Tip:</h4>
+                        <p class="text-gray-700 my-2">Thinking about counter-metrics is a sign of a senior PM. For every metric you propose, ask "How could this be gamed?" For example, if you optimize for "time spent on page," you might encourage slow, inefficient design.</p>
+                        <button class="font-semibold text-blue-700 hover:text-blue-900 mt-2">Practice with a drill on counter-metrics &rarr;</button>
+                     </div>
+                     <button onclick="navigateToPracticeList(currentDrill.skill)" class="w-full md:w-auto btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Return to Practice Sheet</button>
+                </div>
+            </main>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- PAGE 4B: PEER INTERVIEW LOBBY                                       -->
+        <!-- =================================================================== -->
+        <div id="peer-lobby" class="page">
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <button onclick="navigateToDashboard()" class="font-semibold text-pink-700 hover:text-pink-900">&larr; Back to Dashboard</button>
+                <h2 class="text-2xl font-bold text-gray-800">Peer Interview Lobby</h2>
+                <span class="font-bold text-gray-700">Credits: <span id="credits-display-lobby">5</span></span>
+            </header>
+            <main class="p-4 md:p-8 max-w-4xl mx-auto text-center">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                         <h3 class="text-xl font-bold text-gray-800 mb-2">Request an Interview</h3>
+                         <p class="text-gray-600 mb-4 text-sm">Find a peer to practice with. This will start a 7-8 minute mock interview session.</p>
+                         <p class="text-gray-500 mb-4">Available Interviewers: <span class="font-bold text-green-600">4</span></p>
+                         <button onclick="startMatchmaking('interviewee')" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-6 rounded-lg">Find a Match</button>
+                    </div>
+                     <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                         <h3 class="text-xl font-bold text-gray-800 mb-2">Volunteer to Interview</h3>
+                         <p class="text-gray-600 mb-4 text-sm">Help a peer practice and earn credits for your own AI mocks. You'll earn 1 credit per session.</p>
+                         <p class="text-gray-500 mb-4">Interviewees Waiting: <span class="font-bold text-yellow-600">2</span></p>
+                         <button onclick="startMatchmaking('interviewer')" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg">Start Interviewing</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- =================================================================== -->
+        <!-- PAGE 4C: PEER INTERVIEW ROOM (SIMULATED VC)                         -->
+        <!-- =================================================================== -->
+        <div id="peer-interview" class="page">
+             <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <button onclick="endPeerInterview()" class="font-semibold text-pink-700 hover:text-pink-900">End Interview</button>
+                <div id="peer-timer" class="text-xl font-bold text-gray-700">08:00</div>
+                <div class="w-24"></div> <!-- Spacer -->
+            </header>
+            <main class="p-4 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                 <div class="lg:col-span-1 space-y-4">
+                     <div class="bg-gray-800 text-white rounded-lg aspect-video flex items-center justify-center relative"><p class="text-2xl font-bold">Peer's Video</p><span class="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-sm">Olivia L.</span></div>
+                     <div class="bg-gray-800 text-white rounded-lg aspect-video flex items-center justify-center relative"><p class="text-2xl font-bold">Your Video</p><span class="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-sm">Aritra (You)</span></div>
+                 </div>
+                 <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">AI-Generated Case Study</h3>
+                    <p class="text-gray-700 mb-6">"You are the PM for a popular food delivery app. A large number of users are complaining about late deliveries. How would you diagnose and solve this problem?"</p>
+                    <div id="peer-start-controls" class="text-center">
+                        <button id="start-interview-button" onclick="requestStartPeerInterview()" class="btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Start Interview</button>
+                    </div>
+                 </div>
+            </main>
+        </div>
+        
+        <!-- =================================================================== -->
+        <!-- PAGE 4D: PEER FEEDBACK & SCORING SCREEN                              -->
+        <!-- =================================================================== -->
+        <div id="peer-feedback" class="page">
+             <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <h2 class="text-2xl font-bold text-gray-800">Peer Interview Feedback</h2>
+                <div class="w-24"></div> <!-- Spacer -->
+            </header>
+            <main class="p-4 md:p-8 max-w-3xl mx-auto">
+                 <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2 text-center">Interview Complete!</h3>
+                    <p class="text-gray-600 mb-6 text-center">Please provide feedback for your peer, Olivia L.</p>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Overall Score (out of 10)</label>
+                        <input type="number" min="1" max="10" class="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="e.g., 8">
+                    </div>
+                     <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">What went well? (Click to add tags)</label>
+                        <div class="flex flex-wrap gap-2">
+                             <button class="px-3 py-1 text-sm font-semibold bg-green-100 text-green-800 rounded-full hover:bg-green-200">Good Structure</button>
+                             <button class="px-3 py-1 text-sm font-semibold bg-green-100 text-green-800 rounded-full hover:bg-green-200">Creative Solutions</button>
+                             <button class="px-3 py-1 text-sm font-semibold bg-green-100 text-green-800 rounded-full hover:bg-green-200">Clear Communication</button>
+                        </div>
+                    </div>
+                     <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Detailed Review</label>
+                        <textarea rows="4" class="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="e.g., 'Great job clarifying the problem upfront. To improve, try to...'"></textarea>
+                    </div>
+                    <button onclick="submitPeerFeedback()" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-4 rounded-lg">Submit Feedback & Claim Credit</button>
+                </div>
+            </main>
+        </div>
+        
+        <!-- =================================================================== -->
+        <!-- PAGE 4E: PEER INTERVIEW COMPLETE SCREEN                              -->
+        <!-- =================================----------------================== -->
+         <div id="peer-complete" class="page">
+             <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
+                <h2 class="text-2xl font-bold text-gray-800">Session Complete</h2>
+                <div class="w-24"></div> <!-- Spacer -->
+            </header>
             <main class="p-4 md:p-8 max-w-4xl mx-auto text-center">
                 <div class="bg-white rounded-2xl shadow-lg p-8">
-                     <h3 class="text-2xl font-bold text-gray-800 mb-2">Great Work!</h3>
-                     <p class="text-gray-600 mb-6">Here's how you did on that drill.</p>
-                     <div id="drill-score-card" class="bg-pink-50 border-2 border-pink-500 rounded-2xl p-6 mb-6"></div>
-                     <button onclick="navigateToPracticeList(currentDrill.skill)" class="w-full md:w-auto btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Return to Practice Sheet</button>
+                     <h3 class="text-2xl font-bold text-gray-800 mb-2">Thank you for practicing!</h3>
+                     <p class="text-gray-600 mb-6">Your feedback has been submitted.</p>
+                     <div class="bg-green-100 text-green-800 font-semibold p-4 rounded-lg mb-6">
+                        +1 Credit has been added to your account! Your new balance is 6.
+                     </div>
+                     <button onclick="navigateToDashboard()" class="w-full md:w-auto btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Return to Dashboard</button>
                 </div>
             </main>
         </div>
@@ -286,151 +400,16 @@
                 </div>
             </main>
         </div>
-
-        <!-- =================================================================== -->
-        <!-- PAGE 6: PEER INTERVIEW LOBBY                                        -->
-        <!-- =================================================================== -->
-        <div id="peer-lobby" class="page">
-            <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
-                <button onclick="navigateToDashboard()" class="font-semibold text-pink-700 hover:text-pink-900">&larr; Back to Dashboard</button>
-                <h2 class="text-2xl font-bold text-gray-800">Peer Interview Lobby</h2>
-                <div id="credits-display-lobby" class="font-bold text-lg text-pink-600"></div>
-            </header>
-            <main class="p-4 md:p-8 max-w-4xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="bg-white rounded-2xl shadow-lg p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Request an Interview</h3>
-                        <p class="text-gray-600 mb-4 text-sm">Find a peer to practice with. This will start a 7-8 minute mock interview session.</p>
-                        <div class="font-semibold text-gray-700 mb-4">Available Interviewers: <span class="text-green-600">4</span></div>
-                        <button onclick="findMatch()" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-4 rounded-lg">Find a Match</button>
-                    </div>
-                    <div class="bg-white rounded-2xl shadow-lg p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Volunteer to Interview</h3>
-                        <p class="text-gray-600 mb-4 text-sm">Help a peer practice and earn credits for your own AI mocks. You'll earn 1 credit per session.</p>
-                        <div class="font-semibold text-gray-700 mb-4">Interviewees Waiting: <span class="text-blue-600">2</span></div>
-                        <button onclick="findMatch()" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300">Start Interviewing</button>
-                    </div>
-                </div>
-            </main>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- PAGE 7: PEER MATCHING SCREEN                                        -->
-        <!-- =================================================================== -->
-        <div id="peer-matching" class="page p-4">
-            <div class="text-center">
-                <div class="loader mx-auto"></div>
-                <h2 class="text-2xl font-bold text-gray-800 mt-6">Searching for a peer...</h2>
-                <p class="text-gray-600">This should only take a moment.</p>
-            </div>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- PAGE 8: PEER INTERVIEW SCREEN                                       -->
-        <!-- =================================================================== -->
-        <div id="peer-interview" class="page">
-            <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
-                <button onclick="handlePeerInterviewCompletion()" class="font-semibold text-pink-700 hover:text-pink-900">&larr; End Interview</button>
-                <div id="peer-timer" class="text-xl font-bold text-gray-700">08:00</div>
-                <div class="w-24"></div> <!-- Spacer -->
-            </header>
-            <main class="p-4 md:p-8 max-w-6xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="md:col-span-2 grid grid-cols-1 gap-6">
-                        <div class="bg-gray-800 rounded-lg aspect-video flex items-center justify-center text-white relative">
-                            <img src="https://placehold.co/600x400/2D3748/E2E8F0?text=Peer's+Video" class="w-full h-full object-cover rounded-lg">
-                            <span class="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-sm">Olivia L.</span>
-                        </div>
-                        <div class="bg-gray-800 rounded-lg aspect-video flex items-center justify-center text-white relative">
-                            <img src="https://placehold.co/600x400/2D3748/E2E8F0?text=Your+Video" class="w-full h-full object-cover rounded-lg">
-                            <span class="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-sm">Aritra (You)</span>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-2xl shadow-lg p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Interview Case</h3>
-                        <div class="bg-gray-100 p-4 rounded-lg text-gray-700 mb-6">
-                            <p class="font-semibold">AI-Generated Question:</p>
-                            <p>"You are the PM for a food delivery app. Brainstorm three ways to improve the post-order tracking experience for users."</p>
-                        </div>
-                        <div id="peer-start-controls">
-                            <p class="text-sm text-gray-600 mb-4">The 8-minute timer will begin once both participants click 'Start'.</p>
-                            <button id="my-start-button" onclick="handlePeerInterviewStart()" class="w-full btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-4 rounded-lg mb-2">Start Interview</button>
-                            <div class="text-center text-gray-500">
-                                <span id="peer-start-status" class="hidden">Peer is not ready.</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- PAGE 9: PEER FEEDBACK & SCORING SCREEN (NEW!)                       -->
-        <!-- =================================================================== -->
-        <div id="peer-feedback" class="page">
-             <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
-                <h2 class="text-2xl font-bold text-gray-800">Session Over: Provide Feedback</h2>
-                <div class="w-24"></div> <!-- Spacer -->
-            </header>
-            <main class="p-4 md:p-8 max-w-4xl mx-auto text-center">
-                <div class="bg-white rounded-2xl shadow-lg p-8">
-                     <h3 class="text-2xl font-bold text-gray-800 mb-2">How did Olivia L. do?</h3>
-                     <p class="text-gray-600 mb-6">Your feedback helps the community improve. Rate their performance as the interviewee.</p>
-                     <div class="text-left">
-                        <div class="mb-6">
-                            <label class="font-bold text-gray-700 block mb-2">Overall Score (out of 10)</label>
-                            <input type="range" min="1" max="10" value="7" class="w-full">
-                        </div>
-                        <div class="mb-6">
-                            <label class="font-bold text-gray-700 block mb-2">What did they do well?</label>
-                            <div class="flex flex-wrap gap-2">
-                                <button class="px-3 py-1 text-sm font-semibold bg-green-100 text-green-800 rounded-full hover:bg-green-200">Good Structure</button>
-                                <button class="px-3 py-1 text-sm font-semibold bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300">Creative Solutions</button>
-                                <button class="px-3 py-1 text-sm font-semibold bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300">Clear Communication</button>
-                                <button class="px-3 py-1 text-sm font-semibold bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300">Handled Pushback</button>
-                            </div>
-                        </div>
-                        <div class="mb-6">
-                            <label for="detailed-feedback" class="font-bold text-gray-700 block mb-2">Detailed Written Review</label>
-                            <textarea id="detailed-feedback" rows="4" class="w-full p-3 bg-gray-100 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Provide specific, constructive feedback..."></textarea>
-                        </div>
-                     </div>
-                     <button onclick="submitPeerFeedback()" class="w-full md:w-auto btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Submit Feedback & Claim Credit</button>
-                </div>
-            </main>
-        </div>
-
-        <!-- =================================================================== -->
-        <!-- PAGE 10: PEER RESULTS SCREEN                                        -->
-        <!-- =================================================================== -->
-        <div id="peer-results" class="page">
-            <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10">
-                <h2 class="text-2xl font-bold text-gray-800">Interview Complete!</h2>
-                <div class="w-24"></div> <!-- Spacer -->
-            </header>
-            <main class="p-4 md:p-8 max-w-4xl mx-auto text-center">
-                <div class="bg-white rounded-2xl shadow-lg p-8">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-green-500 mb-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
-                     <h3 class="text-2xl font-bold text-gray-800 mb-2">Great Session!</h3>
-                     <p class="text-gray-600 mb-6">You've earned a credit for completing the peer interview.</p>
-                     <div class="bg-green-100 text-green-800 font-bold p-4 rounded-lg text-lg">
-                        +1 Credit Added!
-                     </div>
-                     <button onclick="navigateToDashboard()" class="mt-6 w-full md:w-auto btn-primary bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full">Return to Dashboard</button>
-                </div>
-            </main>
-        </div>
         
     </div>
 
     <script>
         // --- STATE MANAGEMENT ---
         let diagnosticCompleted = false;
+        let credits = 5;
         let timerInterval;
         let currentQuestionIndex = 0;
         let currentDrill = { title: '', skill: '' };
-        let userCredits = 5;
-        let peerInterviewState = { myStart: false, peerStart: false };
         let skillMastery = {
             'Product Design': { name: 'Product Design & Sense', score: 75 },
             'Metrics': { name: 'Metrics & Data Analysis', score: 20 },
@@ -440,10 +419,10 @@
 
         const interviewScript = [
             { type: 'interviewer', text: "Hi Aritra. Welcome to your diagnostic interview... Let's begin: \"You are the PM for Google Maps. You notice that engagement with the 'Explore' tab has dropped by 15% in the last month. How would you investigate this?\"" },
-            { type: 'user', text: "Okay, first I'd want to clarify the scope..." },
-            { type: 'interviewer', text: "Great clarifying questions. Assume the drop started exactly 4 weeks ago... What would be your next steps?" },
-            { type: 'user', text: "Understood. In that case, I'd formulate a hypothesis..." },
-            { type: 'interviewer', text: "That's a logical approach. Let's say you've ruled out any major bugs..." }
+            { type: 'user', text: "Okay, first I'd want to clarify the scope. When did this drop start? Is it on a specific platform like iOS or Android? And is it localized to a certain region?" },
+            { type: 'interviewer', text: "Great clarifying questions. Assume the drop started exactly 4 weeks ago, is happening globally, and affects both iOS and Android equally. What would be your next steps?" },
+            { type: 'user', text: "Understood. In that case, I'd formulate a hypothesis... I'd start by looking at our internal data." },
+            { type: 'interviewer', text: "That's a logical approach. Let's say you've ruled out any major bugs. What external factors would you prioritize investigating?" }
         ];
 
         // --- DOM ELEMENTS ---
@@ -455,6 +434,7 @@
         const questionTitle = document.getElementById('question-title');
         const practiceListTitle = document.getElementById('practice-list-title');
         const drillTimerDisplay = document.getElementById('drill-timer');
+        const peerTimerDisplay = document.getElementById('peer-timer');
         const drillTitle = document.getElementById('drill-title');
         const drillChatContainer = document.getElementById('drill-chat-container');
         const drillMicButton = document.getElementById('drill-mic-button');
@@ -463,14 +443,6 @@
         const currentUserRankDiv = document.getElementById('current-user-rank');
         const leaderboardListDiv = document.getElementById('leaderboard-list');
         const skillMasteryContainer = document.getElementById('skill-mastery-container');
-        const creditsDisplayNew = document.getElementById('credits-display-new');
-        const creditsDisplayReturning = document.getElementById('credits-display-returning');
-        const creditsDisplayLobby = document.getElementById('credits-display-lobby');
-        const peerTimerDisplay = document.getElementById('peer-timer');
-        const myStartButton = document.getElementById('my-start-button');
-        const peerStartStatus = document.getElementById('peer-start-status');
-        const peerStartControls = document.getElementById('peer-start-controls');
-
 
         // --- NAVIGATION ---
         function navigateTo(pageId) {
@@ -478,9 +450,8 @@
             const nextPage = document.getElementById(pageId);
             if (nextPage) {
                 if (pageId === 'leaderboard') renderLeaderboard();
-                if (pageId === 'dashboard-returning-user' || pageId === 'dashboard-new-user' || pageId === 'peer-lobby') updateCreditsDisplay();
                 if (pageId === 'dashboard-returning-user') renderSkillMastery();
-                if (pageId === 'drill-feedback') renderDrillFeedback();
+                if (pageId === 'dashboard-new-user' || pageId === 'dashboard-returning-user' || pageId === 'peer-lobby') updateCreditDisplay();
                 nextPage.classList.add('active');
             }
             window.scrollTo(0, 0);
@@ -490,7 +461,8 @@
             diagnosticCompleted ? navigateTo('dashboard-returning-user') : navigateTo('dashboard-new-user');
         }
 
-        function navigateToPracticeList(skillName) {
+        function navigateToPracticeList(skillKey) {
+            const skillName = skillMastery[skillKey]?.name || 'All Problems';
             practiceListTitle.textContent = `Practice: ${skillName}`;
             navigateTo('practice-list');
         }
@@ -503,10 +475,10 @@
                 time--;
                 const minutes = Math.floor(time / 60).toString().padStart(2, '0');
                 const seconds = (time % 60).toString().padStart(2, '0');
-                display.textContent = `${minutes}:${seconds}`;
+                if (display) display.textContent = `${minutes}:${seconds}`;
                 if (time <= 0) {
                     clearInterval(timerInterval);
-                    onComplete();
+                    if(onComplete) onComplete();
                 }
             }, 1000);
         }
@@ -525,12 +497,12 @@
 
         // --- INTERVIEW & DRILL LOGIC ---
         function startDiagnostic() {
-            if (userCredits < 1) {
-                alert("You don't have enough credits. Volunteer to interview a peer to earn more!");
+            if (credits < 1) {
+                alert("You don't have enough credits to start a diagnostic interview. Please earn more by practicing with peers.");
                 return;
             }
-            userCredits--;
-            updateCreditsDisplay();
+            credits--;
+            updateCreditDisplay();
             navigateTo('practice-diagnostic');
             startTimer(40 * 60, timerDisplay, handleDiagnosticCompletion);
             chatContainer.innerHTML = '';
@@ -541,8 +513,8 @@
             micButton.disabled = false;
         }
 
-        function startDrill(problemTitle, skill) {
-            currentDrill = { title: problemTitle, skill: skill };
+        function startDrill(problemTitle, skillKey) {
+            currentDrill = { title: problemTitle, skill: skillKey };
             navigateTo('practice-drill');
             startTimer(5 * 60, drillTimerDisplay, handleDrillCompletion);
             drillTitle.textContent = problemTitle;
@@ -592,73 +564,71 @@
             }, 2000);
         }
 
-        // --- PEER INTERVIEW LOGIC ---
-        function findMatch() {
-            navigateTo('peer-matching');
+        // --- PEER INTERVIEW FLOW ---
+        function startMatchmaking(role) {
+            // Simulate searching
+            const originalPage = document.querySelector('.page.active');
+            originalPage.innerHTML += `<div id="searching-overlay" class="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center text-2xl font-bold text-gray-800 z-50">Searching for a match...</div>`;
             setTimeout(() => {
-                peerInterviewState = { myStart: false, peerStart: false };
-                myStartButton.textContent = 'Start Interview';
-                myStartButton.disabled = false;
-                peerStartControls.style.display = 'block';
-                peerStartStatus.classList.add('hidden');
+                document.getElementById('searching-overlay').remove();
                 navigateTo('peer-interview');
-            }, 3000); // Simulate 3 seconds of matching
+                document.getElementById('start-interview-button').textContent = "Start Interview";
+                document.getElementById('start-interview-button').disabled = false;
+                startTimer(8*60, peerTimerDisplay, endPeerInterview);
+            }, 2500);
         }
         
-        function handlePeerInterviewStart() {
-            peerInterviewState.myStart = true;
-            myStartButton.textContent = 'Waiting for Peer...';
-            myStartButton.disabled = true;
-            peerStartStatus.classList.remove('hidden');
-
-            // Simulate peer clicking start after a delay
+        function requestStartPeerInterview() {
+            const startButton = document.getElementById('start-interview-button');
+            startButton.textContent = "Waiting for Peer...";
+            startButton.disabled = true;
+            // Simulate peer also clicking start
             setTimeout(() => {
-                peerInterviewState.peerStart = true;
-                checkBothStarted();
-            }, 2000);
-            
-            checkBothStarted();
+                document.getElementById('peer-start-controls').innerHTML = `<p class="text-green-600 font-bold text-lg">Interview in progress...</p>`;
+            }, 1500);
         }
 
-        function checkBothStarted() {
-            if (peerInterviewState.myStart && peerInterviewState.peerStart) {
-                peerStartControls.style.display = 'none';
-                startTimer(8 * 60, peerTimerDisplay, handlePeerInterviewCompletion);
-            }
+        function endPeerInterview() {
+            clearInterval(timerInterval);
+            navigateTo('peer-feedback');
         }
         
         function submitPeerFeedback() {
-            userCredits++;
-            updateCreditsDisplay();
-            navigateTo('peer-results');
+             credits++;
+             navigateTo('peer-complete');
         }
+
 
         // --- FEEDBACK & SCORING ---
-        function renderDrillFeedback() {
-            const oldScore = skillMastery[currentDrill.skill].score;
-            const scoreIncrease = Math.floor(Math.random() * 5) + 3;
-            const newScore = Math.min(100, oldScore + scoreIncrease);
-            skillMastery[currentDrill.skill].score = newScore;
-            drillScoreCard.innerHTML = `<p class="text-gray-600">Your Score on this Drill</p><p class="text-5xl font-bold text-pink-600 my-2">${Math.floor(Math.random() * 3) + 7}/10</p><div class="mt-4 bg-green-100 text-green-800 font-semibold p-3 rounded-lg">Your "${skillMastery[currentDrill.skill].name}" skill increased from ${oldScore}% to ${newScore}%!</div>`;
+        function handleDrillCompletion() {
+            clearInterval(timerInterval);
+            navigateTo('drill-feedback');
         }
-
+        
         // --- RENDERING ---
-        function updateCreditsDisplay() {
-            const creditText = `Credits: ${userCredits}`;
-            creditsDisplayNew.textContent = creditText;
-            creditsDisplayReturning.textContent = creditText;
-            creditsDisplayLobby.textContent = creditText;
+        function updateCreditDisplay() {
+            document.getElementById('credits-display-new').textContent = credits;
+            document.getElementById('credits-display-returning').textContent = credits;
+            document.getElementById('credits-display-lobby').textContent = credits;
         }
 
         function renderSkillMastery() {
-            skillMasteryContainer.innerHTML = '';
+            skillMasteryContainer.innerHTML = ''; // Clear existing skills
             Object.entries(skillMastery).forEach(([key, value]) => {
                 const { name, score } = value;
                 const isWeak = score < 50;
                 const color = score > 70 ? 'green' : score > 40 ? 'yellow' : 'red';
+
                 const skillElement = document.createElement('div');
                 skillElement.className = `p-4 rounded-lg border ${isWeak ? 'bg-red-50 border-red-200' : ''}`;
-                skillElement.innerHTML = `<div class="flex justify-between items-center mb-2"><span class="font-bold text-lg text-gray-800">${name}</span><button onclick="navigateToPracticeList('${key}')" class="bg-pink-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-pink-600 transition">Practice</button></div><div class="w-full bg-gray-200 rounded-full h-4"><div class="bg-${color}-500 h-4 rounded-full" style="width: ${score}%"></div></div><p class="text-right text-sm text-gray-500 mt-1">${score}% Mastery</p>`;
+                skillElement.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-lg text-gray-800">${name}</span>
+                        <button onclick="navigateToPracticeList('${key}')" class="bg-pink-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-pink-600 transition">Practice</button>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4"><div class="bg-${color}-500 h-4 rounded-full" style="width: ${score}%"></div></div>
+                    <p class="text-right text-sm text-gray-500 mt-1">${score}% Mastery</p>
+                `;
                 skillMasteryContainer.appendChild(skillElement);
             });
         }
@@ -698,7 +668,6 @@
 
         // --- EVENT HANDLERS ---
         function handleLogin() {
-             updateCreditsDisplay();
              navigateToDashboard();
         }
 
@@ -706,21 +675,6 @@
             diagnosticCompleted = true;
             clearInterval(timerInterval);
             navigateTo('dashboard-returning-user');
-        }
-
-        function handleDrillCompletion() {
-            clearInterval(timerInterval);
-            navigateTo('drill-feedback');
-        }
-
-        function handlePeerInterviewCompletion() {
-            clearInterval(timerInterval);
-            navigateTo('peer-feedback');
-        }
-        
-        function bookFounderInterview() {
-            // In a real app, this would link to a payment/scheduling flow.
-            alert("Booking flow initiated! You will be redirected to a scheduling page.");
         }
 
     </script>
